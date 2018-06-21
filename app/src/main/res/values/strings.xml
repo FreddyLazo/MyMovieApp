@@ -4,4 +4,7 @@
     <string name="sort_movies_top_rated">Top rated</string>
     <string name="sort_movies_upcoming">Upcoming</string>
     <string name="select_sort_method">Select the sort method you want</string>
+    <string name="menu_sort_method">Sort methods</string>
+    <string name="movie_trailer" translatable="false">Trailer</string>
+    <string name="release_date">Release date</string>
 </resources>

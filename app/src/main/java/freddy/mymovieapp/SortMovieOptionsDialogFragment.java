@@ -1,6 +1,7 @@
 package freddy.mymovieapp;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.RadioButton;
 
 import butterknife.BindView;
@@ -56,6 +58,16 @@ public class SortMovieOptionsDialogFragment extends DialogFragment {
         ButterKnife.bind(this, v);
         return v;
     }
+
+
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
+    }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

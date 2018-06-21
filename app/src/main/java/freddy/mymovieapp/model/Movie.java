@@ -14,6 +14,7 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class Movie implements Parcelable {
+
     @SerializedName("poster_path")
     private String posterPath;
     @SerializedName("adult")
@@ -46,13 +47,6 @@ public class Movie implements Parcelable {
     public Movie() {
     }
 
-    public static final Comparator<Movie> BY_NAME_ALPHABETICAL = new Comparator<Movie>() {
-        @Override
-        public int compare(Movie movie, Movie t1) {
-
-            return movie.originalTitle.compareTo(t1.originalTitle);
-        }
-    };
 
     public String getPosterPath() {
         return  posterPath;

@@ -29,4 +29,15 @@ class MovieViewHolderHelper {
         }
     }
 
+    static class VideoViewHolder extends RecyclerView.ViewHolder {
+
+
+        @BindView(R.id.movie_trailer_name)
+        TextView movieTrailerName;
+
+        VideoViewHolder(View v) {
+            super(v);
+            ButterKnife.bind(this,v);
+        }
+    }
 }
