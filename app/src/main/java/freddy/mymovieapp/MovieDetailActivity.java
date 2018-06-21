@@ -21,6 +21,7 @@ public class MovieDetailActivity extends BaseActivity {
         if(shouldInitActivity(getIntent())){
             movie = getIntent().getParcelableExtra("movies");
         }else{
+
             finish();
         }
     }
