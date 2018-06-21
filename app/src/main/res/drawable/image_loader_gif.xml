@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list android:id="@+id/map_loader"
+    android:oneshot="false"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/image_loader" android:duration="100" />
+    <item android:drawable="@drawable/image_loader2" android:duration="100" />
+    <item android:drawable="@drawable/image_loader3" android:duration="100" />
+    <item android:drawable="@drawable/image_loader4" android:duration="100" />
+    <item android:drawable="@drawable/image_loader5" android:duration="100" />
+    <item android:drawable="@drawable/image_loader6" android:duration="100" />
+</animation-list>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="sort_movies_popular">Populares</string>
+    <string name="sort_movies_top_rated">Mejor valoradas</string>
+    <string name="sort_movies_upcoming">Próximas</string>
+    <string name="select_sort_method">Seleccione el método de clasificación que desee</string>
+
+</resources>
