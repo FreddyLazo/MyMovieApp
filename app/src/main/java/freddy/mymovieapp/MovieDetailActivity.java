@@ -20,7 +20,6 @@ public class MovieDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         if(shouldInitActivity(getIntent())){
             movie = getIntent().getParcelableExtra("movies");
-
         }else{
             finish();
         }
