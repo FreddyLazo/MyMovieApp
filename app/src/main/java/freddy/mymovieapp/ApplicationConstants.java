@@ -7,7 +7,6 @@ package freddy.mymovieapp;
 
 class ApplicationConstants {
 
-
     static final class ApiKeyConstant {
         static final String API_KEY_CONSTANT = "587e8c8d8b5878e8ca3b0ae070b2e4d0";
     }
@@ -17,4 +16,5 @@ class ApplicationConstants {
         static final int TOP_RATED = 1;
         static final int UPCOMING = 2;
     }
+
 }

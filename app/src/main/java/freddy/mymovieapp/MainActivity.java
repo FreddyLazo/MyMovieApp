@@ -20,6 +20,8 @@ import freddy.mymovieapp.adapter.MoviesAdapter;
 import freddy.mymovieapp.api.Service;
 import freddy.mymovieapp.data.PersistencePopularData;
 import freddy.mymovieapp.data.PersistenceTopRatedData;
+import freddy.mymovieapp.data.PersistenceUpcomingData;
+import freddy.mymovieapp.data.PreferencesHelper;
 import freddy.mymovieapp.model.Movie;
 import freddy.mymovieapp.model.MovieResponses;
 import retrofit2.Call;
@@ -36,6 +38,7 @@ public class MainActivity extends BaseActivity implements SortMethodInterface, S
     private SearchView searchView;
     private PersistencePopularData favoriteData;
     private PersistenceTopRatedData topRatedData;
+    private PersistenceUpcomingData upcomingData;
 
 
     @Override
@@ -105,7 +108,9 @@ public class MainActivity extends BaseActivity implements SortMethodInterface, S
                 adapter = new MoviesAdapter(ctx, movies);
                 myList.setAdapter(adapter);
                 myList.scrollToPosition(0);
-                saveData(movies, sortMovieMethod);
+                if (shouldSaveData(sortMovieMethod)) {
+                    saveData(movies, sortMovieMethod);
+                }
             }
 
             @Override
@@ -115,8 +120,12 @@ public class MainActivity extends BaseActivity implements SortMethodInterface, S
         });
     }
 
+    private boolean shouldSaveData(int sortMovieMethod) {
+        return !PreferencesHelper.getCachePreference(ctx,sortMovieMethod);
+    }
+
     private void getData(int sortMovieMethod) {
-        switch (sortMovieMethod){
+        switch (sortMovieMethod) {
             case ApplicationConstants.SortMovieMethods.POPULAR:
                 favoriteData = new PersistencePopularData(ctx);
                 adapter = new MoviesAdapter(ctx, favoriteData.getAllMovies());
@@ -126,14 +135,20 @@ public class MainActivity extends BaseActivity implements SortMethodInterface, S
                 adapter = new MoviesAdapter(ctx, topRatedData.getAllMovies());
                 break;
             case ApplicationConstants.SortMovieMethods.UPCOMING:
+                upcomingData = new PersistenceUpcomingData(ctx);
+                adapter = new MoviesAdapter(ctx, upcomingData.getAllMovies());
                 break;
         }
-
         myList.setAdapter(adapter);
         myList.scrollToPosition(0);
     }
 
     private void saveData(List<Movie> movies, int sortMovieMethod) {
+        saveCacheData(movies,sortMovieMethod);
+        PreferencesHelper.setCachePreference(ctx,sortMovieMethod);
+    }
+
+    private void saveCacheData(List<Movie> movies, int sortMovieMethod) {
         switch (sortMovieMethod) {
             case ApplicationConstants.SortMovieMethods.POPULAR:
                 favoriteData = new PersistencePopularData(ctx);
@@ -148,6 +163,10 @@ public class MainActivity extends BaseActivity implements SortMethodInterface, S
                 }
                 break;
             case ApplicationConstants.SortMovieMethods.UPCOMING:
+                upcomingData = new PersistenceUpcomingData(ctx);
+                for (Movie movie : movies) {
+                    upcomingData.saveData(movie);
+                }
                 break;
         }
     }
