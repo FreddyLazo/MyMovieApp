@@ -5,16 +5,16 @@ package freddy.mymovieapp;
  * email : freddy.lazo@pucp.pe
  */
 
-class ApplicationConstants {
+public class ApplicationConstants {
 
-    static final class ApiKeyConstant {
-        static final String API_KEY_CONSTANT = "587e8c8d8b5878e8ca3b0ae070b2e4d0";
+    public static final class ApiKeyConstant {
+        public static final String API_KEY_CONSTANT = "587e8c8d8b5878e8ca3b0ae070b2e4d0";
     }
 
-    static final class SortMovieMethods {
-        static final int POPULAR = 0;
-        static final int TOP_RATED = 1;
-        static final int UPCOMING = 2;
+    public static final class SortMovieMethods {
+        public static final int POPULAR = 0;
+        public static final int TOP_RATED = 1;
+        public static final int UPCOMING = 2;
     }
 
 }

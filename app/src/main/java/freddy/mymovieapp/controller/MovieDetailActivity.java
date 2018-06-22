@@ -1,4 +1,4 @@
-package freddy.mymovieapp;
+package freddy.mymovieapp.controller;
 
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -18,6 +18,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import freddy.mymovieapp.ApplicationConstants;
+import freddy.mymovieapp.R;
 import freddy.mymovieapp.adapter.VideoAdapter;
 import freddy.mymovieapp.api.Service;
 import freddy.mymovieapp.model.Movie;
@@ -74,6 +76,10 @@ public class MovieDetailActivity extends BaseActivity {
         }
     }
 
+    /**
+     * I load the data from the API to get the trailers
+     * @param id
+     */
     private void loadMovieTrailers(Integer id) {
         Service apiService = freddy.mymovieapp.api.Client.getClient().create(Service.class);
         Call<VideoResponses> call = apiService.getMovieVideos(id, ApplicationConstants.ApiKeyConstant.API_KEY_CONSTANT);
@@ -92,10 +98,15 @@ public class MovieDetailActivity extends BaseActivity {
         });
     }
 
+    /**
+     * Set up the toolbar in order to have an navigation icon
+     */
     private void SetUpToolbar() {
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.colorWhite), PorterDuff.Mode.SRC_ATOP);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (toolbar.getNavigationIcon() != null)
+            toolbar.getNavigationIcon().setColorFilter(getResources().getColor(R.color.colorWhite), PorterDuff.Mode.SRC_ATOP);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,6 +115,9 @@ public class MovieDetailActivity extends BaseActivity {
         });
     }
 
+    /**
+     * I load all the data to the view or widgets
+     */
     private void initUI() {
         String glideUrl = "https://image.tmdb.org/t/p/w500" + movieUrl;
 
@@ -115,9 +129,13 @@ public class MovieDetailActivity extends BaseActivity {
         movieNameTextView.setText(movieName);
         movieOverviewTextView.setText(movieOverview);
         movieDateTextView.setText(dateOfRelease);
-        movieRatingBar.setRating(movieVoteAverage.floatValue()/2);
+        movieRatingBar.setRating(movieVoteAverage.floatValue() / 2);
     }
 
+    /**
+     * Init all the global data
+     * @param movie
+     */
     private void initMovieData(Movie movie) {
         movieUrl = movie.getPosterPath();
         movieName = movie.getOriginalTitle();
@@ -126,6 +144,11 @@ public class MovieDetailActivity extends BaseActivity {
         movieVoteAverage = movie.getVoteAverage();
     }
 
+    /**
+     * I make sure the data is not empty
+     * @param intent
+     * @return
+     */
     private boolean shouldInitActivity(Intent intent) {
         return intent.hasExtra("movie_data") && intent.getParcelableExtra("movie_data") != null;
     }

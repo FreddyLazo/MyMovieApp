@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
-import freddy.mymovieapp.MovieDetailActivity;
+import freddy.mymovieapp.controller.MovieDetailActivity;
 import freddy.mymovieapp.R;
 import freddy.mymovieapp.model.Movie;
 

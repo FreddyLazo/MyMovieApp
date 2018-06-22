@@ -1,7 +1,6 @@
-package freddy.mymovieapp;
+package freddy.mymovieapp.controller;
 
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +14,10 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import freddy.mymovieapp.ApplicationConstants;
 import freddy.mymovieapp.Interfaces.SortMethodInterface;
+import freddy.mymovieapp.R;
+import freddy.mymovieapp.SortMovieOptionsDialogFragment;
 import freddy.mymovieapp.adapter.MoviesAdapter;
 import freddy.mymovieapp.api.Service;
 import freddy.mymovieapp.data.PersistencePopularData;
@@ -50,6 +52,9 @@ public class MainActivity extends BaseActivity implements SortMethodInterface, S
         loadDataFromApi();
     }
 
+    /**
+     * Init default sort movie method
+     */
     private void initData() {
         currentSortMethod = ApplicationConstants.SortMovieMethods.POPULAR;
     }
@@ -57,7 +62,8 @@ public class MainActivity extends BaseActivity implements SortMethodInterface, S
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_activity_menu, menu);
-        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        MenuItem search = menu.findItem(R.id.action_search);
+        searchView = (SearchView) search.getActionView();
         searchView.setIconifiedByDefault(true);
         searchView.setOnQueryTextListener(this);
         searchView.setOnCloseListener(this);
@@ -76,6 +82,9 @@ public class MainActivity extends BaseActivity implements SortMethodInterface, S
         }
     }
 
+    /**
+     * Call a DialogFragment in order to show a RadioGroup
+     */
     private void showSortOptionsDialogFragment() {
         SortMovieOptionsDialogFragment changelogDialogFragment = SortMovieOptionsDialogFragment.newInstance(currentSortMethod);
         changelogDialogFragment.show(getFragmentManager(), SortMovieOptionsDialogFragment.TAG);
@@ -85,7 +94,6 @@ public class MainActivity extends BaseActivity implements SortMethodInterface, S
      * This method gonna load all the data from the MovieDb API
      */
     private void loadDataFromApi() {
-
         List<Movie> movieList = new ArrayList<>();
         adapter = new MoviesAdapter(this, movieList);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(ctx, 2);
@@ -93,13 +101,17 @@ public class MainActivity extends BaseActivity implements SortMethodInterface, S
         myList.setItemAnimator(new DefaultItemAnimator());
         myList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        // favoriteData = new FavoriteDbHelper(activity);
         Service apiService = freddy.mymovieapp.api.Client.getClient().create(Service.class);
         Call<MovieResponses> call = apiService.getPopularMovies(ApplicationConstants.ApiKeyConstant.API_KEY_CONSTANT);
         loadJson(call, ApplicationConstants.SortMovieMethods.POPULAR);
-
     }
 
+    /**
+     * This method load the data depends on the sort movie method
+     *
+     * @param call
+     * @param sortMovieMethod
+     */
     private void loadJson(Call<MovieResponses> call, final int sortMovieMethod) {
         call.enqueue(new Callback<MovieResponses>() {
             @Override
@@ -115,16 +127,27 @@ public class MainActivity extends BaseActivity implements SortMethodInterface, S
 
             @Override
             public void onFailure(Call<MovieResponses> call, Throwable t) {
-                getData(sortMovieMethod);
+                getDataFromLocalDatabase(sortMovieMethod);
             }
         });
     }
 
+    /**
+     * Method useful to load the data just once and avoid same movies
+     *
+     * @param sortMovieMethod
+     * @return
+     */
     private boolean shouldSaveData(int sortMovieMethod) {
-        return !PreferencesHelper.getCachePreference(ctx,sortMovieMethod);
+        return !PreferencesHelper.getCachePreference(ctx, sortMovieMethod);
     }
 
-    private void getData(int sortMovieMethod) {
+    /**
+     * This method call the local database in case we safe data other case the list gonna be empty
+     *
+     * @param sortMovieMethod
+     */
+    private void getDataFromLocalDatabase(int sortMovieMethod) {
         switch (sortMovieMethod) {
             case ApplicationConstants.SortMovieMethods.POPULAR:
                 favoriteData = new PersistencePopularData(ctx);
@@ -143,11 +166,23 @@ public class MainActivity extends BaseActivity implements SortMethodInterface, S
         myList.scrollToPosition(0);
     }
 
+    /**
+     * This method save loaded data from the API
+     *
+     * @param movies
+     * @param sortMovieMethod
+     */
     private void saveData(List<Movie> movies, int sortMovieMethod) {
-        saveCacheData(movies,sortMovieMethod);
-        PreferencesHelper.setCachePreference(ctx,sortMovieMethod);
+        saveCacheData(movies, sortMovieMethod);
+        PreferencesHelper.setCachePreference(ctx, sortMovieMethod);
     }
 
+    /**
+     * This Method add all the movie data
+     *
+     * @param movies
+     * @param sortMovieMethod
+     */
     private void saveCacheData(List<Movie> movies, int sortMovieMethod) {
         switch (sortMovieMethod) {
             case ApplicationConstants.SortMovieMethods.POPULAR:
@@ -173,6 +208,15 @@ public class MainActivity extends BaseActivity implements SortMethodInterface, S
 
     @Override
     public void sortMethodSelected(int sort_method) {
+        loadJson(getCallFromSortMethod(sort_method), sort_method);
+    }
+
+    /**
+     * This method return a call from sortMethod
+     * @param sort_method
+     * @return
+     */
+    private Call<MovieResponses> getCallFromSortMethod(int sort_method) {
         currentSortMethod = sort_method;
         Service apiService = freddy.mymovieapp.api.Client.getClient().create(Service.class);
         Call<MovieResponses> call;
@@ -190,7 +234,7 @@ public class MainActivity extends BaseActivity implements SortMethodInterface, S
                 call = apiService.getPopularMovies(ApplicationConstants.ApiKeyConstant.API_KEY_CONSTANT);
                 break;
         }
-        loadJson(call, sort_method);
+        return call;
     }
 
     @Override

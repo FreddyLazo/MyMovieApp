@@ -4,5 +4,6 @@
     <string name="sort_movies_upcoming">Próximas</string>
     <string name="select_sort_method">Seleccione el método de clasificación que desee</string>
     <string name="menu_sort_method">Métodos de clasificación</string>
+    <string name="menu_query">Consulta</string>
     <string name="release_date">Fecha de Lanzamiento</string>
 </resources>

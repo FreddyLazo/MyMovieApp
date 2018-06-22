@@ -1,4 +1,4 @@
-package freddy.mymovieapp;
+package freddy.mymovieapp.controller;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;

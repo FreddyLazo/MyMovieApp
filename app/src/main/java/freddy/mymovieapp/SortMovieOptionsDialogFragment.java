@@ -59,15 +59,13 @@ public class SortMovieOptionsDialogFragment extends DialogFragment {
         return v;
     }
 
-
-
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        if (dialog.getWindow() != null)
+            dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         return dialog;
     }
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -77,10 +75,18 @@ public class SortMovieOptionsDialogFragment extends DialogFragment {
         }
     }
 
+    /**
+     * Get the data from the activity
+     * @param arguments
+     */
     private void getDataFromActivity(Bundle arguments) {
         initRadioButtonState(arguments.getInt(CURRENT_SORT_ORDER));
     }
 
+    /**
+     * Init radio button state
+     * @param anInt
+     */
     private void initRadioButtonState(int anInt) {
         switch (anInt) {
             case ApplicationConstants.SortMovieMethods.POPULAR:
