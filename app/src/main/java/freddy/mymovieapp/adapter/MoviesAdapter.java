@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import freddy.mymovieapp.MovieDetailActivity;
@@ -24,10 +25,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private Context ctx;
     private List<Movie> movieData;
+    private List<Movie> filteredMovieData;
+    private List<Movie> generalData;
+    private boolean isFiltering;
 
-    public MoviesAdapter(Context ctx, List<Movie> movieData){
+    public MoviesAdapter(Context ctx, List<Movie> movieData) {
         this.ctx = ctx;
         this.movieData = movieData;
+        this.isFiltering = false;
     }
 
 
@@ -40,8 +45,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder genericHolder, int position) {
         final MovieViewHolderHelper.MovieViewHolder holder = (MovieViewHolderHelper.MovieViewHolder) genericHolder;
-        holder.movieTittle.setText(movieData.get(position).getOriginalTitle());
-        String url = "https://image.tmdb.org/t/p/w500" + movieData.get(position).getPosterPath();
+        generalData = isFiltering ? filteredMovieData : movieData;
+        holder.movieTittle.setText(generalData.get(position).getOriginalTitle());
+        String url = "https://image.tmdb.org/t/p/w500" + generalData.get(position).getPosterPath();
         Glide.with(ctx)
                 .load(url)
                 .placeholder(R.drawable.image_loader_gif)
@@ -50,17 +56,33 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Movie movieDataClicked = movieData.get(holder.getAdapterPosition());
+                Movie movieDataClicked = generalData.get(holder.getAdapterPosition());
                 Intent intent = new Intent(ctx, MovieDetailActivity.class);
-                intent.putExtra("movie_data", movieDataClicked );
+                intent.putExtra("movie_data", movieDataClicked);
                 ctx.startActivity(intent);
             }
         });
 
     }
 
+    public void performQuery(String query) {
+        if (!query.isEmpty()) {
+            query = query.toLowerCase().trim();
+            filteredMovieData = new ArrayList<>();
+            for (Movie movie : movieData) {
+                if (movie.getOriginalTitle().toLowerCase().startsWith(query)) {
+                    filteredMovieData.add(movie);
+                }
+            }
+            isFiltering = true;
+        } else {
+            isFiltering = false;
+        }
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
-        return movieData.size();
+        return isFiltering ? filteredMovieData.size() : movieData.size();
     }
 }

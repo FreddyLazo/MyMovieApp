@@ -1,13 +1,16 @@
 package freddy.mymovieapp;
 
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -24,7 +27,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends BaseActivity implements SortMethodInterface {
+public class MainActivity extends BaseActivity implements SortMethodInterface , SearchView.OnQueryTextListener , SearchView.OnCloseListener{
 
     @BindView(R.id.my_recycler_view)
     RecyclerView myList;
@@ -32,6 +35,8 @@ public class MainActivity extends BaseActivity implements SortMethodInterface {
     private List<Movie> movieList;
     private MoviesAdapter adapter;
     private int currentSortMethod;
+    private SearchView searchView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,16 @@ public class MainActivity extends BaseActivity implements SortMethodInterface {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_activity_menu, menu);
+        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        searchView.setIconifiedByDefault(true);
+        searchView.setOnQueryTextListener(this);
+        searchView.setOnCloseListener(this);
+ /*       searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                animateButton(0, 1);
+            }
+        });*/
         return true;
     }
 
@@ -132,5 +147,29 @@ public class MainActivity extends BaseActivity implements SortMethodInterface {
         loadJson(call);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (!searchView.isIconified()) {
+            searchView.setIconified(true);
+        }else{
+            super.onBackPressed();
+        }
+    }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        Log.d("query", newText);
+        adapter.performQuery(newText);
+        return false;
+    }
+
+    @Override
+    public boolean onClose() {
+        return false;
+    }
 }
