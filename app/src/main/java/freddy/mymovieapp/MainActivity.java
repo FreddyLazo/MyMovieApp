@@ -19,23 +19,23 @@ import freddy.mymovieapp.Interfaces.SortMethodInterface;
 import freddy.mymovieapp.adapter.MoviesAdapter;
 import freddy.mymovieapp.api.Service;
 import freddy.mymovieapp.data.PersistencePopularData;
+import freddy.mymovieapp.data.PersistenceTopRatedData;
 import freddy.mymovieapp.model.Movie;
 import freddy.mymovieapp.model.MovieResponses;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends BaseActivity implements SortMethodInterface , SearchView.OnQueryTextListener , SearchView.OnCloseListener{
+public class MainActivity extends BaseActivity implements SortMethodInterface, SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
     @BindView(R.id.my_recycler_view)
     RecyclerView myList;
 
-    private List<Movie> movieList;
     private MoviesAdapter adapter;
     private int currentSortMethod;
     private SearchView searchView;
-    private PersistencePopularData favoriteDbHelper;
-
+    private PersistencePopularData favoriteData;
+    private PersistenceTopRatedData topRatedData;
 
 
     @Override
@@ -83,49 +83,72 @@ public class MainActivity extends BaseActivity implements SortMethodInterface , 
      */
     private void loadDataFromApi() {
 
-        movieList = new ArrayList<>();
+        List<Movie> movieList = new ArrayList<>();
         adapter = new MoviesAdapter(this, movieList);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(ctx, 2);
         myList.setLayoutManager(gridLayoutManager);
         myList.setItemAnimator(new DefaultItemAnimator());
         myList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        // favoriteDbHelper = new FavoriteDbHelper(activity);
+        // favoriteData = new FavoriteDbHelper(activity);
         Service apiService = freddy.mymovieapp.api.Client.getClient().create(Service.class);
-        Call<MovieResponses> call  = apiService.getPopularMovies(ApplicationConstants.ApiKeyConstant.API_KEY_CONSTANT);
-        loadJson(call);
+        Call<MovieResponses> call = apiService.getPopularMovies(ApplicationConstants.ApiKeyConstant.API_KEY_CONSTANT);
+        loadJson(call, ApplicationConstants.SortMovieMethods.POPULAR);
 
     }
 
-    private void loadJson(Call<MovieResponses> call) {
-
-        // Client Client = new Client();
-
+    private void loadJson(Call<MovieResponses> call, final int sortMovieMethod) {
         call.enqueue(new Callback<MovieResponses>() {
             @Override
             public void onResponse(Call<MovieResponses> call, Response<MovieResponses> response) {
                 List<Movie> movies = response.body().getResults();
-                //Collections.sort(movies, Movie.BY_NAME_ALPHABETICAL);
                 adapter = new MoviesAdapter(ctx, movies);
                 myList.setAdapter(adapter);
                 myList.scrollToPosition(0);
-                saveData(movies);
+                saveData(movies, sortMovieMethod);
             }
 
             @Override
             public void onFailure(Call<MovieResponses> call, Throwable t) {
-                favoriteDbHelper = new PersistencePopularData(ctx);
-                adapter = new MoviesAdapter(ctx,  favoriteDbHelper.getAllMovies());
-                myList.setAdapter(adapter);
-                myList.scrollToPosition(0);
+                getData(sortMovieMethod);
             }
         });
     }
 
-    private void saveData( List<Movie> movies) {
-        favoriteDbHelper = new PersistencePopularData(ctx);
-        for(Movie movie :movies ){
-            favoriteDbHelper.saveData(movie);
+    private void getData(int sortMovieMethod) {
+        switch (sortMovieMethod){
+            case ApplicationConstants.SortMovieMethods.POPULAR:
+                favoriteData = new PersistencePopularData(ctx);
+                adapter = new MoviesAdapter(ctx, favoriteData.getAllMovies());
+                break;
+            case ApplicationConstants.SortMovieMethods.TOP_RATED:
+                topRatedData = new PersistenceTopRatedData(ctx);
+                adapter = new MoviesAdapter(ctx, topRatedData.getAllMovies());
+                break;
+            case ApplicationConstants.SortMovieMethods.UPCOMING:
+                break;
+        }
+
+        myList.setAdapter(adapter);
+        myList.scrollToPosition(0);
+    }
+
+    private void saveData(List<Movie> movies, int sortMovieMethod) {
+        switch (sortMovieMethod) {
+            case ApplicationConstants.SortMovieMethods.POPULAR:
+                favoriteData = new PersistencePopularData(ctx);
+                for (Movie movie : movies) {
+                    favoriteData.saveData(movie);
+                }
+                break;
+            case ApplicationConstants.SortMovieMethods.TOP_RATED:
+                topRatedData = new PersistenceTopRatedData(ctx);
+                for (Movie movie : movies) {
+                    topRatedData.saveData(movie);
+                }
+                break;
+            case ApplicationConstants.SortMovieMethods.UPCOMING:
+                break;
         }
     }
 
@@ -148,14 +171,14 @@ public class MainActivity extends BaseActivity implements SortMethodInterface , 
                 call = apiService.getPopularMovies(ApplicationConstants.ApiKeyConstant.API_KEY_CONSTANT);
                 break;
         }
-        loadJson(call);
+        loadJson(call, sort_method);
     }
 
     @Override
     public void onBackPressed() {
         if (!searchView.isIconified()) {
             searchView.setIconified(true);
-        }else{
+        } else {
             super.onBackPressed();
         }
     }

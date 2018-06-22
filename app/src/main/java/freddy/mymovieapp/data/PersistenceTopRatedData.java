@@ -42,7 +42,6 @@ public class PersistenceTopRatedData extends SQLiteOpenHelper {
 
         @Override
         public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
             sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + FavoriteContract.TopRatedEntry.TABLE_NAME);
             onCreate(sqLiteDatabase);
         }
@@ -73,12 +72,12 @@ public class PersistenceTopRatedData extends SQLiteOpenHelper {
 
             };
             String sortOrder =
-                    FavoriteContract.FavoriteEntry._ID + " ASC";
+                    FavoriteContract.TopRatedEntry._ID + " ASC";
             List<Movie> favoriteList = new ArrayList<>();
 
             SQLiteDatabase db = this.getReadableDatabase();
 
-            Cursor cursor = db.query(FavoriteContract.FavoriteEntry.TABLE_NAME,
+            Cursor cursor = db.query(FavoriteContract.TopRatedEntry.TABLE_NAME,
                     columns,
                     null,
                     null,

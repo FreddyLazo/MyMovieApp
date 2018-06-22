@@ -18,7 +18,7 @@ import freddy.mymovieapp.model.Movie;
 
 public class PersistencePopularData extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "favorite.db";
+    private static final String DATABASE_NAME = "popular.db";
 
     private static final int DATABASE_VERSION = 1;
 
