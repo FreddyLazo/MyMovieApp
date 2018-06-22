@@ -50,7 +50,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         String url = "https://image.tmdb.org/t/p/w500" + generalData.get(position).getPosterPath();
         Glide.with(ctx)
                 .load(url)
-                .placeholder(R.drawable.image_loader_gif)
+                .placeholder(R.drawable.image_loader)
                 .into(holder.movieImageView);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

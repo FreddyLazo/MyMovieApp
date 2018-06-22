@@ -4,14 +4,11 @@ import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +18,7 @@ import butterknife.ButterKnife;
 import freddy.mymovieapp.Interfaces.SortMethodInterface;
 import freddy.mymovieapp.adapter.MoviesAdapter;
 import freddy.mymovieapp.api.Service;
+import freddy.mymovieapp.data.PersistencePopularData;
 import freddy.mymovieapp.model.Movie;
 import freddy.mymovieapp.model.MovieResponses;
 import retrofit2.Call;
@@ -36,6 +34,8 @@ public class MainActivity extends BaseActivity implements SortMethodInterface , 
     private MoviesAdapter adapter;
     private int currentSortMethod;
     private SearchView searchView;
+    private PersistencePopularData favoriteDbHelper;
+
 
 
     @Override
@@ -58,12 +58,6 @@ public class MainActivity extends BaseActivity implements SortMethodInterface , 
         searchView.setIconifiedByDefault(true);
         searchView.setOnQueryTextListener(this);
         searchView.setOnCloseListener(this);
- /*       searchView.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                animateButton(0, 1);
-            }
-        });*/
         return true;
     }
 
@@ -115,14 +109,24 @@ public class MainActivity extends BaseActivity implements SortMethodInterface , 
                 adapter = new MoviesAdapter(ctx, movies);
                 myList.setAdapter(adapter);
                 myList.scrollToPosition(0);
+                saveData(movies);
             }
 
             @Override
             public void onFailure(Call<MovieResponses> call, Throwable t) {
-                Log.d("Error", t.getMessage());
-                Toast.makeText(MainActivity.this, "Error Fetching Data!", Toast.LENGTH_SHORT).show();
+                favoriteDbHelper = new PersistencePopularData(ctx);
+                adapter = new MoviesAdapter(ctx,  favoriteDbHelper.getAllMovies());
+                myList.setAdapter(adapter);
+                myList.scrollToPosition(0);
             }
         });
+    }
+
+    private void saveData( List<Movie> movies) {
+        favoriteDbHelper = new PersistencePopularData(ctx);
+        for(Movie movie :movies ){
+            favoriteDbHelper.saveData(movie);
+        }
     }
 
     @Override
