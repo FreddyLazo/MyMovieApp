@@ -8,6 +8,9 @@ import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +37,8 @@ public class MainActivity extends BaseActivity implements SortMethodInterface, S
 
     @BindView(R.id.my_recycler_view)
     RecyclerView myList;
+    @BindView(R.id.shimmer_layout)
+    ShimmerFrameLayout shimmerLayout;
 
     private MoviesAdapter adapter;
     private int currentSortMethod;
@@ -94,6 +99,7 @@ public class MainActivity extends BaseActivity implements SortMethodInterface, S
      * This method gonna load all the data from the MovieDb API
      */
     private void loadDataFromApi() {
+        shimmerLayout.startShimmerAnimation();
         List<Movie> movieList = new ArrayList<>();
         adapter = new MoviesAdapter(this, movieList);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(ctx, 2);
@@ -116,6 +122,7 @@ public class MainActivity extends BaseActivity implements SortMethodInterface, S
         call.enqueue(new Callback<MovieResponses>() {
             @Override
             public void onResponse(Call<MovieResponses> call, Response<MovieResponses> response) {
+                endAnimation();
                 List<Movie> movies = response.body().getResults();
                 adapter = new MoviesAdapter(ctx, movies);
                 myList.setAdapter(adapter);
@@ -127,9 +134,18 @@ public class MainActivity extends BaseActivity implements SortMethodInterface, S
 
             @Override
             public void onFailure(Call<MovieResponses> call, Throwable t) {
+                endAnimation();
                 getDataFromLocalDatabase(sortMovieMethod);
             }
         });
+    }
+
+    /**
+     * End fancy animation
+     */
+    private void endAnimation() {
+        shimmerLayout.stopShimmerAnimation();
+        shimmerLayout.setVisibility(View.GONE);
     }
 
     /**

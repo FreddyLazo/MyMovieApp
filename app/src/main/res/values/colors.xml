@@ -7,4 +7,5 @@
     <color name="colorWhite">#ffffff</color>
     <color name="colorYellow">#ffcf00</color>
     <color name="lightGrey">#81807c</color>
+    <color name="placeholder_bg">#dddddd</color>
 </resources>
