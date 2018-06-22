@@ -49,7 +49,6 @@ public class MovieDetailActivity extends BaseActivity {
     @BindView(R.id.movie_rating_bar)
     RatingBar movieRatingBar;
 
-
     private String movieUrl;
     private String movieName;
     private String movieOverview;
