@@ -88,7 +88,6 @@ public class MovieDetailActivity extends BaseActivity {
             @Override
             public void onFailure(Call<VideoResponses> call, Throwable t) {
 
-
             }
         });
     }
