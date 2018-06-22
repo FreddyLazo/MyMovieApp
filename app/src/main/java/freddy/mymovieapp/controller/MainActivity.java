@@ -20,7 +20,6 @@ import butterknife.ButterKnife;
 import freddy.mymovieapp.ApplicationConstants;
 import freddy.mymovieapp.Interfaces.SortMethodInterface;
 import freddy.mymovieapp.R;
-import freddy.mymovieapp.SortMovieOptionsDialogFragment;
 import freddy.mymovieapp.adapter.MoviesAdapter;
 import freddy.mymovieapp.api.Service;
 import freddy.mymovieapp.data.PersistencePopularData;

@@ -1,11 +1,9 @@
-package freddy.mymovieapp;
+package freddy.mymovieapp.controller;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +12,10 @@ import android.widget.RadioButton;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
+import freddy.mymovieapp.ApplicationConstants;
 import freddy.mymovieapp.Interfaces.SortMethodInterface;
+import freddy.mymovieapp.R;
 
 /**
  * Created by Freddy on 21/06/2018.
